@@ -105,7 +105,7 @@ export default function Home() {
           {/* <p>{publicKey}</p> */}
       </div>
       <div className=" flex justify-center text-xl">
-        <AnimatedShinyText {...shinyTextProps} className="border rounded-full inline-flex items-center justify-center px-4 py-1 transition ease-out hover:text-neutral-600 hover:duration-300 hover:dark:text-neutral-400"/>
+        <AnimatedShinyText {...shinyTextProps} className="border font-dark rounded-full inline-flex items-center justify-center px-4 py-1 transition ease-out hover:text-neutral-600 hover:duration-300 hover:dark:text-neutral-400"/>
       </div>
       <div className="my-24 font-extrabold text-9xl">
         <VelocityScroll {...textRevealProps}/>
