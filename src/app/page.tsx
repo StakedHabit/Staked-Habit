@@ -137,7 +137,7 @@ export default function Home() {
       {/* <div>
         <Calendar/>
       </div> */}
-      {publicKey && <HomeProfile data={publicKey} />}
+      {/* {publicKey && <HomeProfile data={publicKey} />} */}
       <div className="flex justify-center my-8 mx-10">
           <button className="border border-black text-black text-xl bg-white px-4 py-2 rounded" onClick={handleGoToApp}>
             Go to app >

@@ -21,6 +21,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/Freighter.jsx", "src/app/sm.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/Freighter.jsx", "src/app/sm.js", "src/app/profile/graph.jsx"],
   "exclude": ["node_modules"]
 }

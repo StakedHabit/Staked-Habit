@@ -1,4 +1,7 @@
+'use client'
 import React from 'react'
+import GitHubRepoGraph from './graph';
+import GitHubCommitHistoryGraph from './graph1'
 
 function HomeProfile({data}: {data: any}) {
   return (
@@ -16,6 +19,13 @@ function HomeProfile({data}: {data: any}) {
             Profile
           </a>
         </nav>
+      </div>
+
+      <div>
+        <GitHubRepoGraph/>
+      </div>
+      <div>
+        <GitHubCommitHistoryGraph/>
       </div>
     </div>
     
