@@ -7,7 +7,9 @@ import { format } from 'date-fns';
 import { DockDemo } from "./components/dock";
 import DatePickerWithRange from "./components/date"
 import CircularPlusButton from "./components/button";
-import CircularMinusButton from './components/minusButton'
+import CircularMinusButton from './components/minusButton';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import {
   Card,
@@ -32,54 +34,119 @@ const DockProp = {
 }
 
 const CardWithForm: React.FC = () => {
+  const router = useRouter();
 
+  const [incLoc, setIncLoc] = useState(0); // State for lines of code increment
+  const [incCommit, setIncCommit] = useState(0); // State for commits increment
 
-  const handleClick = () => {
-    console.log("hdafod");
-  }
+  const handleClickLocIncrement = () => {
+    setIncLoc(incLoc + 1);
+  };
+
+  const handleClickLocDecrement = () => {
+    if (incLoc > 0) {
+      setIncLoc(incLoc - 1);
+    }
+  };
+
+  const handleClickCommitIncrement = () => {
+    setIncCommit(incCommit + 10);
+  };
+
+  const handleClickCommitDecrement = () => {
+    if (incCommit > 0) {
+      setIncCommit(incCommit - 10);
+    }
+  };
 
   const handleMinusClick = () => {
     console.log("hdafod");
   }
 
+  const handleClickHome = () => {
+    router.push('/home')
+  }
+
+  const handleClickLeaderBoard = () => {
+    router.push('/leaderboard')
+  }
+
+  const handleClickProfile = () => {
+    router.push('/profile')
+  }
+
+
+  
+
   return (
-    <div className="my-10 flex flex-col items-center gap-4">
+    <div>
+    
+    <div className="mx-10 my-5 flex items-end justify-end">
+        <nav className="flex items-end flex space-x-4">
+          <a href="/home" className="text-black" onClick={handleClickHome}>
+            Home
+          </a>
+          <a href="/leaderboard" className="text-black" onClick={handleClickLeaderBoard}>
+            Leaderboard
+          </a>
+          <a href="/profile" className="text-black" onClick={handleClickProfile}>
+            Profile
+          </a>
+        </nav>
+      </div>
+
+    <div className="my-32 flex flex-col items-center gap-4">
+     
+
       <div className="grid w-full max-w-sm items-center gap-1.5 border rounded-md">
-        <textarea id="picture" placeholder="Staked amount" />
+        <textarea placeholder="Habit title" />
       </div>
       <div className="flex space-x-4">
-        <Card className="w-[350px]">
-          <CardHeader>
-            <CardTitle>Lines of Code</CardTitle>
-            <CardDescription>Set your daily activity goal</CardDescription>
-          </CardHeader>
-          <CardContent>
+      <div className="flex flex-col gap-4">
+      <Card className="w-[350px]">
+        <CardHeader>
+          <CardTitle>Lines of Code</CardTitle>
+          <CardDescription>Set your daily activity goal</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between">
             <div className="p-4">
-              <CircularPlusButton onClick={handleClick} />
+              <CircularMinusButton onClick={handleClickLocDecrement} />
+            </div>
+            <div>
+              <h1></h1>
+              <h2 className="-mx-1 text-3xl font-bold">{incLoc}</h2>
+              <h2 className="-mx-1 ">loc/day</h2>
             </div>
             <div className="p-4">
-              <CircularMinusButton onClick={handleMinusClick}/>
+              <CircularPlusButton onClick={handleClickLocIncrement} />
             </div>
-            <h1>250</h1>
-            <h2>loc/day</h2>
-          </CardContent>
-        </Card>
-        <Card className="w-[350px]">
-          <CardHeader>
-            <CardTitle>Commits per Day</CardTitle>
-            <CardDescription>Set your daily activity goal</CardDescription>
-          </CardHeader>
-          <CardContent>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="w-[350px]">
+        <CardHeader>
+          <CardTitle>Commits per Day</CardTitle>
+          <CardDescription>Set your daily activity goal</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between">
             <div className="p-4">
-              <CircularPlusButton onClick={handleClick} />
+              <CircularMinusButton onClick={handleClickCommitDecrement} />
+            </div>
+            <div>
+              <h1></h1>
+              <h2 className="mx-10 text-3xl font-bold">{incCommit}</h2>
+              <h2 className="-mx-1 ">Lines of code/day</h2>
             </div>
             <div className="p-4">
-              <CircularMinusButton onClick={handleMinusClick}/>
+              <CircularPlusButton onClick={handleClickCommitIncrement} />
             </div>
-            <h1>4</h1>
-            <h2>commits/day</h2>
-          </CardContent>
-        </Card>
+          </div>
+        </CardContent>
+      </Card>
+      </div>
       </div>
 
       <div>
@@ -87,12 +154,16 @@ const CardWithForm: React.FC = () => {
       </div>
       <div>
         <div className="grid w-full max-w-sm items-center gap-1.5">
-          <Input id="picture" type="text" placeholder="Staked amount" />
+          <Input id="picture" type="number" placeholder="Staked amount" />
         </div>
         <div>
-          <DockDemo />
+          {/* <DockDemo /> */}
+        </div>
+        <div className="my-4 bg-white grid w-full max-w-sm items-center gap-1.5">
+          <Button>Create Habit</Button>
         </div>
       </div>
+    </div>
     </div>
   )
 }

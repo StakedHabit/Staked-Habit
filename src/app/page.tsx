@@ -5,10 +5,21 @@ import RetroGrid from './../components/magicui/retro-grid';
 import GridPattern from './../components/magicui/animated-grid-pattern';
 import { AnimatedSubscribeButton } from './../components/magicui/animated-subscribe-button';
 import { useEffect, useState } from "react";
+import { useRouter } from 'next/navigation';
 import { isAllowed, setAllowed, getUserInfo } from '@stellar/freighter-api';
 import { Button } from "@/components/ui/button";
 import VelocityScroll from './../components/magicui/scroll-based-velocity';
 import AnimatedShinyText from './../components/magicui/animated-shiny-text';
+import Component from "./home/components/chart";
+import { MagicCard } from "@/components/magicui/magic-card";
+import { MagicCardDemo } from "./card";
+import { AlertDemo } from "./alert";
+import { ToastDemo } from "./confetti";
+import { DayPickerProvider } from "react-day-picker";
+import { Calendar } from "@/components/ui/calendar";
+import HomeProfile from "./profile/page";
+// import { createHabit }from "./sm"
+import Navbar from "./nav";
 
 
 const walletConnetButtonProps = {
@@ -29,10 +40,7 @@ const shinyTextProps = {
 }
 
 export default function Home() {
-
-  function handleConnectClick() {
-    console.log("hiii")
-  }
+  const router = useRouter();
 
 
   const [publicKey, setPublicKey] = useState<string | null>(null);
@@ -48,29 +56,32 @@ export default function Home() {
     }
   };
 
+  const handleCreatePass = async () => {
+    // const tempPassId = await createHabit(pubKey, title, description).then(
+    //   (value) => value
+    // );
+    // console.log("templPassId: ", tempPassId);
+  };
+
   const handleConnect = async () => {
     try {
+      // Toggle allowed status
       await setAllowed();
       const pk = await getPk();
-      if (pk) setPublicKey(pk);
+      if (pk) {
+        setPublicKey(pk);
+        // Navigate to /home on successful connection
+        router.push('/home');
+      }
     } catch (error) {
       console.error('Error connecting:', error);
     }
-
-    if(publicKey){
-      setPublicKey(null);
-    }
-
-    if(!publicKey){
-      try {
-        await setAllowed();
-        const pk = await getPk();
-        if (pk) setPublicKey(pk);
-      } catch (error) {
-        console.error('Error connecting:', error);
-      }
-    }
   };
+
+  const handleGoToApp = async () => {
+    router.push('/home')
+  }
+
 
   useEffect(() => {
     const checkFreighterStatus = async () => {
@@ -95,6 +106,9 @@ export default function Home() {
 
   return (
     <div>
+      {/* <div>
+        <Navbar/>
+      </div> */}
       <div>
         <GridPattern />
       </div>
@@ -111,7 +125,30 @@ export default function Home() {
         <VelocityScroll {...textRevealProps}/>
       </div>
 
+      {/* <div>
+      <MagicCardDemo/>
+      </div> */}
+      {/* <div>
+        <AlertDemo/>
+      </div> */}
+      {/* <div>
+        <ToastDemo/>
+      </div> */}
+      {/* <div>
+        <Calendar/>
+      </div> */}
+      {publicKey && <HomeProfile data={publicKey} />}
+      <div className="flex justify-center my-8 mx-10">
+          <button className="border border-black text-black text-xl bg-white px-4 py-2 rounded" onClick={handleGoToApp}>
+            Go to app >
+          </button>
+          {/* <p>{publicKey}</p> */}
+      </div>
     </div>
   );
+}
+
+function async() {
+  throw new Error("Function not implemented.");
 }
 
