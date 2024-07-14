@@ -49,7 +49,7 @@ const GitHubCommitHistoryGraph = () => {
   };
 
   return (
-    <Card className="w-full max-w-3xl mx-auto mt-8">
+    <Card className="w-1/2 max-w-3xl mx-auto mt-8">
       <CardHeader>
         <CardTitle>GitHub Commit History and Lines of Code</CardTitle>
       </CardHeader>

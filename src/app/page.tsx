@@ -35,7 +35,7 @@ const textRevealProps = {
 }
 
 const shinyTextProps = {
-  children: "✨ Introducing StakedHabit in Beta",
+  children: "✨ Introducing StakedHabit",
   shimmerWidth: 500,
 }
 
@@ -124,6 +124,11 @@ export default function Home() {
       <div className="my-24 font-extrabold text-9xl">
         <VelocityScroll {...textRevealProps}/>
       </div>
+      {/* <div>
+        <a href="/">
+        <img src="frontend/src/svgs/staked_habit_logo.png" alt="My Website Logo" className="logo" style={{ width: '500px', height: '500px' }} />
+        </a>
+      </div> */}
 
       {/* <div>
       <MagicCardDemo/>

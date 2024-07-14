@@ -10,6 +10,17 @@ import CircularPlusButton from "./components/button";
 import CircularMinusButton from './components/minusButton';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import {
+  Contract,
+  SorobanRpc,
+  TransactionBuilder,
+  Networks,
+  BASE_FEE,
+  nativeToScVal,
+  Address,
+  xdr,
+} from "@stellar/stellar-sdk";
+import { userSignTransaction } from "./Freight";
 
 import {
   Card,
@@ -34,28 +45,127 @@ const DockProp = {
 }
 
 const CardWithForm: React.FC = () => {
+
+  let rpcUrl = "https://soroban-testnet.stellar.org";
+
+  let contractAddress =
+    "CDK5UPMDYHBRPG2D25SN7OER7FNVS5ANUMKUVBHDXP74BVVKOKZTTFCJ";
+
+  // coverting Account Address to ScVal form
+  const accountToScVal = (account: any) => new Address(account).toScVal();
+
+  // coverting String to ScVal form
+  const stringToScValString = (value: any) => {
+    return nativeToScVal(value);
+  };
+
+  const numberToU32 = (value: any) => {
+    return nativeToScVal(value, { type: "u32" });
+  };
+
+  let params = {
+    fee: BASE_FEE,
+    networkPassphrase: Networks.TESTNET,
+  };
+
+  async function contractInt(caller: string, functName: string, values: xdr.ScVal | null) {
+    const provider = new SorobanRpc.Server(rpcUrl, { allowHttp: true });
+    const sourceAccount = await provider.getAccount(caller);
+    const contract = new Contract(contractAddress);
+    let buildTx;
+
+    if (values == null) {
+      buildTx = new TransactionBuilder(sourceAccount, params)
+        .addOperation(contract.call(functName))
+        .setTimeout(30)
+        .build();
+    } else if (Array.isArray(values)) {
+      buildTx = new TransactionBuilder(sourceAccount, params)
+        .addOperation(contract.call(functName, ...values))
+        .setTimeout(30)
+        .build();
+    } else {
+      buildTx = new TransactionBuilder(sourceAccount, params)
+        .addOperation(contract.call(functName, values))
+        .setTimeout(30)
+        .build();
+    }
+
+    let _buildTx = await provider.prepareTransaction(buildTx);
+
+    let prepareTx = _buildTx.toXDR(); // pre-encoding (converting it to XDR format)
+
+    let signedTx = await userSignTransaction(prepareTx, "TESTNET", caller);
+
+    let tx = TransactionBuilder.fromXDR(signedTx, Networks.TESTNET);
+
+    try {
+      let sendTx = await provider.sendTransaction(tx).catch(function (err) {
+        console.error("Catch-1", err);
+        return err;
+      });
+      if (sendTx.errorResult) {
+        throw new Error("Unable to submit transaction");
+      }
+      if (sendTx.status === "PENDING") {
+        let txResponse = await provider.getTransaction(sendTx.hash);
+        //   we will continously checking the transaction status until it gets successfull added to the blockchain ledger or it gets rejected
+        while (txResponse.status === "NOT_FOUND") {
+          txResponse = await provider.getTransaction(sendTx.hash);
+          await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        if (txResponse.status === "SUCCESS") {
+          let result = txResponse.returnValue;
+          return result;
+        }
+      }
+    } catch (err) {
+      console.log("Catch-2", err);
+      return;
+    }
+  }
+
+  const handleSubmit = () => {
+
+
+    async function expirePass(caller: string, pass_id: any) {
+      let values = numberToU32(pass_id);
+
+      try {
+        let ans = await contractInt(caller, "view_habit", values);
+        console.log(ans);
+      } catch (error) {
+        console.log("failed");
+      }
+    }
+
+    expirePass("GASZAKYGUWA4KNM4CJBWENZUYG4BWSDXWY5Q4XYR5HGLMMBXUYVVBG2K", 1);
+
+
+  }
+
   const router = useRouter();
 
   const [incLoc, setIncLoc] = useState(0); // State for lines of code increment
   const [incCommit, setIncCommit] = useState(0); // State for commits increment
 
   const handleClickLocIncrement = () => {
-    setIncLoc(incLoc + 1);
+    setIncLoc(incLoc + 10);
   };
 
   const handleClickLocDecrement = () => {
     if (incLoc > 0) {
-      setIncLoc(incLoc - 1);
+      setIncLoc(incLoc - 10);
     }
   };
 
   const handleClickCommitIncrement = () => {
-    setIncCommit(incCommit + 10);
+    setIncCommit(incCommit + 1);
   };
 
   const handleClickCommitDecrement = () => {
     if (incCommit > 0) {
-      setIncCommit(incCommit - 10);
+      setIncCommit(incCommit - 1);
     }
   };
 
@@ -138,7 +248,7 @@ const CardWithForm: React.FC = () => {
             <div>
               <h1></h1>
               <h2 className="mx-10 text-3xl font-bold">{incCommit}</h2>
-              <h2 className="-mx-1 ">Lines of code/day</h2>
+              <h2 className="-mx-1 ">Commits/day</h2>
             </div>
             <div className="p-4">
               <CircularPlusButton onClick={handleClickCommitIncrement} />
@@ -160,7 +270,7 @@ const CardWithForm: React.FC = () => {
           {/* <DockDemo /> */}
         </div>
         <div className="my-4 bg-white grid w-full max-w-sm items-center gap-1.5">
-          <Button>Create Habit</Button>
+          <Button onClick={handleSubmit}>Create Habit</Button>
         </div>
       </div>
     </div>
